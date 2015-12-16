@@ -1,0 +1,7 @@
+
+#skip the target directory
+target
+#skip the generated Intellij files
+*.iml
+*.ipr
+*.iws
