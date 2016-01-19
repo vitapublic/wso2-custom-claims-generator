@@ -45,7 +45,6 @@ public class CustomTokenGenerator extends JWTGenerator {
             if (log.isDebugEnabled())
                 log.debug("adding resource owner claims to map - netid " + netid);
 
-            map.put(BYU_DIALECT + "/resourceowner_net_id", netid);
             map = addResourceOwnerClaims(netid, map);
         }
 
@@ -128,6 +127,7 @@ public class CustomTokenGenerator extends JWTGenerator {
         map.put(BYU_DIALECT + "/resourceowner_suffix", identifiers.getSuffix());
         map.put(BYU_DIALECT + "/resourceowner_sort_name", identifiers.getSortName());
         map.put(BYU_DIALECT + "/resourceowner_preferred_first_name", identifiers.getPreferredFirstName());
+        map.put(BYU_DIALECT + "/resourceowner_net_id", netid);
 
         if (log.isDebugEnabled())
             log.debug("addResourceOwnerClaims ending");
