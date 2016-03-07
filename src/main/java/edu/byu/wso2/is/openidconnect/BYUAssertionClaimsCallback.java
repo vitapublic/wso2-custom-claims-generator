@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  */
 public class BYUAssertionClaimsCallback implements CustomClaimsCallbackHandler {
 
-    Log log = LogFactory.getLog(SAMLAssertionClaimsCallback.class);
+    Log log = LogFactory.getLog(BYUAssertionClaimsCallback.class);
 
     static String BYU_DIALECT = "http://byu.edu/claims";
     private final BYUEntityHelper BYUEntityHelper = new BYUEntityHelper();
@@ -36,6 +36,8 @@ public class BYUAssertionClaimsCallback implements CustomClaimsCallbackHandler {
         Assertion assertion = (Assertion) requestMsgCtx.getProperty(OAuthConstants.OAUTH_SAML2_ASSERTION);
         if (assertion != null) {
             List<AttributeStatement> list = assertion.getAttributeStatements();
+            if (log.isDebugEnabled())
+                log.debug("SAML Assertions found ");
             if (list.size() > 0) {
                 Iterator<Attribute> attribIterator =
                         assertion.getAttributeStatements().get(0)
@@ -56,10 +58,12 @@ public class BYUAssertionClaimsCallback implements CustomClaimsCallbackHandler {
             // get ByuId, NetId, and PersonId from DB
             //^BYU/([a-z0-9]*)
             String user = requestMsgCtx.getAuthorizedUser();
-            Pattern pattern = Pattern.compile("^BYU/([a-z0-9]*)");
+            if (log.isDebugEnabled())
+                log.debug("getting attributes for user  " + user);
+            Pattern pattern = Pattern.compile("^(BYU|byu)/([a-z0-9]*)");
             Matcher matcher = pattern.matcher(user);
             if (matcher.find()) {
-                String netid = matcher.group(1);
+                String netid = matcher.group(2);
                 if (log.isDebugEnabled())
                     log.debug("finding attributes for netid " + netid);
                 BYUEntity identifiers = BYUEntityHelper.getBYUEntityFromNetId(netid);
@@ -75,8 +79,17 @@ public class BYUAssertionClaimsCallback implements CustomClaimsCallbackHandler {
                     builder.setClaim("sort_name", identifiers.getSortName());
                     builder.setClaim("preferred_first_name", identifiers.getPreferredFirstName());
                 }
-                //if no identifiers can be matched - do nothing
-            } // if pattern doesn't match - do nothing
+                else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("no identifiers found for netid " + netid);
+                    }
+                }
+            }
+            else {
+                if (log.isDebugEnabled()) {
+                    log.debug("pattern didn't match for user " + user);
+                }
+            }
         }
     }
 
