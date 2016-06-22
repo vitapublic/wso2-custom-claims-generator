@@ -8,7 +8,7 @@ This is a Key Manager (Either standalone or integrated with IS) project.
 #### Prerequisites
 
 1. Maven 3 must be installed.
-2. Java 8 must be installed and on the path.
+2. Java 7 must be installed and on the path. Java 8 is not supported
 
 #### Build
 From the home directory of the project run `mvn clean package`. This will download the dependencies into your local repository,
