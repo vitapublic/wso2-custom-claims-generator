@@ -29,8 +29,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class BYUEntityHelper {
-    private static final Log log = LogFactory.getLog(BYUEntityHelper.class);
-    
+
+    private static Log log = LogFactory.getLog(BYUEntityHelper.class);
     private static DataSource ds = null;
 
     public BYUEntityHelper() {
@@ -171,7 +171,7 @@ public class BYUEntityHelper {
 
             statement = con.createStatement();
             String query = "select * from pro.person p, iam.credential c where p.byu_id = c.byu_id " +
-                                "and c.credential_type = 'WSO2_CLIENT_ID' and c.credential_name = '" + consumerKey +"'";
+                                "and c.credential_type = 'WSO2_CLIENT_ID' and c.credential_id = '" + consumerKey +"'";
             if (log.isDebugEnabled())
                 log.debug("query: " + query);
             resultSet = statement.executeQuery(query);
