@@ -1,6 +1,6 @@
 ## BYU Custom Claims Generator
 
-This project is for generating a BYU specific custom cliams for the JSON Web Token and OpenId Connect id_token.
+This project is for generating a BYU specific custom claims for the JSON Web Token and OpenId Connect id_token.
 This is a Key Manager (Either standalone or integrated with IS) project.
 
 ### Build Process:
@@ -8,7 +8,7 @@ This is a Key Manager (Either standalone or integrated with IS) project.
 #### Prerequisites
 
 1. Maven 3 must be installed.
-2. Java 7 must be installed and on the path. Java 8 is not supported
+2. Java 8 must be installed and on the path.
 
 #### Build
 From the home directory of the project run `mvn clean package`. This will download the dependencies into your local repository,

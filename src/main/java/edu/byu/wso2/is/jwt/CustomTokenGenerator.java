@@ -23,15 +23,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.apimgt.impl.APIConstants;
 import org.wso2.carbon.apimgt.impl.dto.APIKeyValidationInfoDTO;
-import org.wso2.carbon.apimgt.impl.token.JWTGenerator;
+import org.wso2.carbon.apimgt.impl.token.URLSafeJWTGenerator;
 import org.wso2.carbon.apimgt.api.*;
 import org.wso2.carbon.user.core.util.UserCoreUtil;
+import org.apache.commons.codec.binary.Base64;
+
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class CustomTokenGenerator extends JWTGenerator {
+public class CustomTokenGenerator extends URLSafeJWTGenerator {
 
     private static final Log log = LogFactory.getLog(CustomTokenGenerator.class);
 
@@ -40,6 +42,8 @@ public class CustomTokenGenerator extends JWTGenerator {
 
     public CustomTokenGenerator() {
     }
+
+
 
     //there is no access to the api call headers, etc. only what was passed in the DTO
 

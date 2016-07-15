@@ -17,18 +17,18 @@ package edu.byu.wso2.is.openidconnect;
  *
  */
 
+import com.nimbusds.jwt.JWTClaimsSet;
 import edu.byu.wso2.is.helper.BYUEntity;
 import edu.byu.wso2.is.helper.BYUEntityHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.oltu.openidconnect.as.messages.IDTokenBuilder;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.Attribute;
 import org.opensaml.saml2.core.AttributeStatement;
 import org.wso2.carbon.identity.oauth.common.OAuthConstants;
+import org.wso2.carbon.identity.oauth2.authz.OAuthAuthzReqMessageContext;
 import org.wso2.carbon.identity.oauth2.token.OAuthTokenReqMessageContext;
 import org.wso2.carbon.identity.openidconnect.CustomClaimsCallbackHandler;
-import org.wso2.carbon.identity.openidconnect.SAMLAssertionClaimsCallback;
 
 import java.util.Iterator;
 import java.util.List;
@@ -47,9 +47,23 @@ public class BYUAssertionClaimsCallback implements CustomClaimsCallbackHandler {
     private final BYUEntityHelper BYUEntityHelper = new BYUEntityHelper();
 
     @Override
-    public void handleCustomClaims(IDTokenBuilder builder, OAuthTokenReqMessageContext requestMsgCtx) {
+    public void handleCustomClaims(JWTClaimsSet builder, OAuthTokenReqMessageContext requestMsgCtx) {
         // reading the token set in the same grant
         Assertion assertion = (Assertion) requestMsgCtx.getProperty(OAuthConstants.OAUTH_SAML2_ASSERTION);
+        String user = requestMsgCtx.getAuthorizedUser().toString();
+        AddUserClaims(builder, user, assertion);
+    }
+
+    @Override
+    public void handleCustomClaims(JWTClaimsSet jwtClaimsSet, OAuthAuthzReqMessageContext oAuthAuthzReqMessageContext) {
+        // reading the token set in the same grant
+        Assertion assertion = (Assertion) oAuthAuthzReqMessageContext.getProperty(OAuthConstants.OAUTH_SAML2_ASSERTION);
+        String user = oAuthAuthzReqMessageContext.getAuthorizationReqDTO().getUser().toString();
+        AddUserClaims(jwtClaimsSet, user, assertion);
+
+    }
+
+    private void AddUserClaims(JWTClaimsSet builder, String user, Assertion assertion) {
         if (assertion != null) {
             List<AttributeStatement> list = assertion.getAttributeStatements();
             if (log.isDebugEnabled())
@@ -73,7 +87,6 @@ public class BYUAssertionClaimsCallback implements CustomClaimsCallbackHandler {
         else {
             // get ByuId, NetId, and PersonId from DB
             //^BYU/([a-z0-9]*)
-            String user = requestMsgCtx.getAuthorizedUser();
             if (log.isDebugEnabled())
                 log.debug("getting attributes for user  " + user);
             Pattern pattern = Pattern.compile("^(BYU|byu)/([a-z0-9]*)");
@@ -108,5 +121,6 @@ public class BYUAssertionClaimsCallback implements CustomClaimsCallbackHandler {
             }
         }
     }
+
 
 }
