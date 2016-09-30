@@ -29,6 +29,7 @@ import org.wso2.carbon.user.core.util.UserCoreUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Calendar;
 
 
 public class CustomTokenGenerator extends JWTGenerator {
@@ -42,6 +43,23 @@ public class CustomTokenGenerator extends JWTGenerator {
     }
 
     //there is no access to the api call headers, etc. only what was passed in the DTO
+
+	public Map<String, String> populateStandardClaims(APIKeyValidationInfoDTO keyValidationInfoDTO, String apiContext, String version)
+            throws APIManagementException {
+
+        //generating expiring timestamp
+        long currentTime = Calendar.getInstance().getTimeInMillis() / 1000;
+        long expireIn = currentTime + 60 * getTTL();
+
+		// Get all of the normally populated claims
+        Map<String, String> claims = super.populateStandardClaims(keyValidationInfoDTO,apiContext,version);
+
+		// Now edit the issuer and change expiration to seconds
+		claims.put("iss", "https://api.byu.edu");
+		claims.put("exp", String.valueOf(expireIn));
+
+		return claims;
+    }
 
     public Map<String, String> populateCustomClaims(APIKeyValidationInfoDTO keyValidationInfoDTO, String apiContext, String version, String accessToken)
             throws APIManagementException {
